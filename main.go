@@ -5,6 +5,8 @@ import (
 	"os"
 )
 
+var tasks []string // in-memory, temporary storage
+
 func usage() {
 	fmt.Println(`Usage:
 	todo <command> [args]
@@ -20,6 +22,17 @@ func usage() {
 	`)
 }
 
+func listTasks() {
+	if len(tasks) == 0 {
+		fmt.Println("Your todo list is empty!")
+		return
+	}
+	fmt.Println("Your tasks:")
+	for i, t := range tasks {
+		fmt.Printf("%d. %s\n", i+1, t)
+	}
+}
+
 func main() {
 	// os.Args holds CLI arguments. os.Args[0] is the program name.
 	if len(os.Args) < 2 {
@@ -31,8 +44,7 @@ func main() {
 
 	switch command {
 	case "list":
-		// implement this in the next step
-		fmt.Println("No tasks yet! (feature coming next)")
+		listTasks()
 
 	case "add":
 		// implement this in the next step
