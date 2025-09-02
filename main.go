@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 var tasks []string // in-memory, temporary storage
@@ -33,6 +34,16 @@ func listTasks() {
 	}
 }
 
+func addTask(args []string) {
+	if len(args) == 0 {
+		fmt.Println("Please provide a task description")
+		return
+	}
+	text := strings.Join(args, " ")
+	tasks = append(tasks, text)
+	fmt.Println("Added task:", text)
+}
+
 func main() {
 	// os.Args holds CLI arguments. os.Args[0] is the program name.
 	if len(os.Args) < 2 {
@@ -47,8 +58,7 @@ func main() {
 		listTasks()
 
 	case "add":
-		// implement this in the next step
-		fmt.Println("Add feature coming in next patch!")
+		addTask(os.Args[2:])
 
 	case "help", "-h", "--help":
 		usage()
