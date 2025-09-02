@@ -1,12 +1,37 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
 )
 
-var tasks []string // in-memory, temporary storage
+// old // var tasks []string // in-memory, temporary storage
+
+type Task struct {
+	Text string `json: "text"`
+	Done bool   `json: "done"`
+}
+
+const taskFile = "tasks.json"
+
+// load tasks from JSON file
+func loadTasks() ([]Task, error) {
+	data, err := os.ReadFile(taskFile)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return []Task{}, nil //no file, return empty list
+		}
+		return nil, err
+	}
+	var tasks []Task
+	err = json.Unmarshal(data, &tasks)
+	if err != nil {
+		return nil, err
+	}
+	return tasks, nil
+}
 
 func usage() {
 	fmt.Println(`Usage:
