@@ -8,11 +8,9 @@ import (
 	"strings"
 )
 
-// old // var tasks []string // in-memory, temporary storage
-
 type Task struct {
-	Text string `json: "text"`
-	Done bool   `json: "done"`
+	Text string `json:"text"`
+	Done bool   `json:"done"`
 }
 
 const taskFile = "tasks.json"
