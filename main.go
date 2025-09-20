@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -77,7 +78,6 @@ func listTasks() {
 	}
 }
 
-// implement actual add task
 func addTask(args []string) {
 	if len(args) == 0 {
 		fmt.Println("Please provide a task description")
@@ -102,6 +102,41 @@ func addTask(args []string) {
 
 }
 
+func markDone(args []string) {
+
+	if len(args) != 1 {
+		fmt.Println("Usage: todo done <task number>")
+		return
+	}
+
+	// convert argument string to int
+	index, err := strconv.Atoi(args[0])
+	if err != nil || index < 1 {
+		fmt.Println("Please provide a valid task number")
+		return
+	}
+
+	tasks, err := loadTasks()
+	if err != nil {
+		fmt.Println("Error loading tasks:", err)
+		return
+	}
+
+	if index > len(tasks) {
+		fmt.Println("Task number out of range")
+		return
+	}
+
+	// mark as done
+	tasks[index-1].Done = true
+	err = saveTasks(tasks)
+	if err != nil {
+		fmt.Println("Error saving tasks:", err)
+		return
+	}
+	fmt.Printf("Task %d marked as done!\n", index)
+}
+
 func main() {
 	// os.Args holds CLI arguments. os.Args[0] is the program name.
 	if len(os.Args) < 2 {
@@ -117,6 +152,9 @@ func main() {
 
 	case "add":
 		addTask(os.Args[2:])
+
+	case "done":
+		markDone((os.Args[2:]))
 
 	case "help", "-h", "--help":
 		usage()
