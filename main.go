@@ -48,31 +48,13 @@ func usage() {
 	`)
 }
 
-// load tasks from JSON file
-func loadTasks() ([]Task, error) {
-	data, err := os.ReadFile(taskFile)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return []Task{}, nil // no file yet, return empty list
-		}
-		return nil, err
-	}
-	var tasks []Task
-	err = json.Unmarshal(data, &tasks)
-	if err != nil {
-		return nil, err
-	}
-	return tasks, nil
-}
-
 // save tasks to JSON file
-func saveTasks(tasks []Task) err {
-	data, err := json.MarshalIndent(tasks, "", " ") {
-		if err != nil {
-			return err
-		}
-		return os.WriteFile(taskFile, data, 0644)
+func saveTasks(tasks []Task) error {
+	data, err := json.MarshalIndent(tasks, "", " ")
+	if err != nil {
+		return err
 	}
+	return os.WriteFile(taskFile, data, 0644)
 }
 
 func listTasks() {
@@ -95,15 +77,29 @@ func listTasks() {
 	}
 }
 
-//implement actual add task
+// implement actual add task
 func addTask(args []string) {
 	if len(args) == 0 {
 		fmt.Println("Please provide a task description")
 		return
 	}
 	text := strings.Join(args, " ")
-	tasks = append(tasks, text)
-	fmt.Println("Added task:", text)
+
+	tasks, err := loadTasks()
+	if err != nil {
+		fmt.Println("Error loading tasks:", err)
+		return
+	}
+
+	tasks = append(tasks, Task{Text: text, Done: false})
+
+	err = saveTasks(tasks)
+	if err != nil {
+		fmt.Println("Error saving tasks:", err)
+		return
+	}
+	fmt.Println("Added tasks:", text)
+
 }
 
 func main() {
